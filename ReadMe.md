@@ -1,6 +1,6 @@
 # Theory 2
 
-> Student Name: **YOUR_NAME**
+> Student Name: **RETRACTED** (You don't need to know my full name)
 
 ![Website Screenshot](./docs/images/screenshot.png)
 

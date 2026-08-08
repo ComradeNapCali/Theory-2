@@ -7,10 +7,11 @@ import TimeZone from "../components/TimeZoneCard";
 import AboutMe from "../components/AboutMe";
 import Now from "../components/Now";
 import ContentPlaceholder from "../components/ContentPlaceholder";
+import WeatherCard from "../components/WeatherCard";
 import profileData from "@/data/profile.json";
-// import Globe from "../components/Globe";
+import { fetchWeather, getWeatherLocation } from "@/lib/weather";
 
-export default function Home() {
+export default function Home({ weatherData, weatherCity }) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
@@ -76,21 +77,7 @@ export default function Home() {
         <ContactsCard contacts={profileData.contacts} />
         <TimeZone timeZone={profileData.timeZone} />
         <Now nowInfo={profileData.now} />
-        <Card
-          colorText="text-neutral-100"
-          colSpan="md:col-span-1"
-          href={profileData.sections.schoolAssignment.href}
-          rowSpan="md:row-span-1"
-          target={profileData.sections.schoolAssignment.target}
-          title={profileData.sections.schoolAssignment.title}
-        >
-          <div className="flex h-full items-center justify-center rounded bg-darkslate-400/30 p-2">
-            {/* <Globe client:load /> */}
-            <p className="text-xs font-light text-neutral-200">
-              {profileData.sections.schoolAssignment.placeholder}
-            </p>
-          </div>
-        </Card>
+        <WeatherCard weatherData={weatherData} city={weatherCity} />
         <ContentPlaceholder
           title={profileData.sections.comingSoon.title}
           message={profileData.sections.comingSoon.message}
@@ -120,4 +107,24 @@ export default function Home() {
       </main>
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  try {
+    const city = getWeatherLocation(profileData);
+    const weatherData = await fetchWeather(city);
+    return {
+      props: {
+        weatherData,
+        weatherCity: city,
+      },
+    };
+  } catch {
+    return {
+      props: {
+        weatherData: null,
+        weatherCity: null,
+      },
+    };
+  }
 }
